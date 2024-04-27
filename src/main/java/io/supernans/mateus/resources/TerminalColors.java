@@ -1,4 +1,4 @@
-package org.example.resources;
+package io.supernans.mateus.resources;
 
 public class TerminalColors {
     public final static String RED = "\033[0;31m";

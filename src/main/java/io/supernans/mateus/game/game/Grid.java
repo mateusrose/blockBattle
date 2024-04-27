@@ -1,14 +1,16 @@
-package org.example.game.game;
+package io.supernans.mateus.game.game;
+
+import io.supernans.mateus.game.game.Block;
 
 public class Grid {
 
-    private int width;
+    public static int WIDTH;
     private int height;
 
     private Block[][] blocks;
 
     public Grid(int width, int height) {
-        this.width = width;
+        WIDTH = width;
         this.height = height;
         blocks = new Block[width][height];
     }
@@ -21,14 +23,9 @@ public class Grid {
         blocks[col][row] = block;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
     public int getHeight() {
         return height;
     }
-
 
     public Block[][] getBlocks() {
         return blocks;

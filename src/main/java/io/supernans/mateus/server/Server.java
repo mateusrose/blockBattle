@@ -1,12 +1,11 @@
-package org.example.server;
+package io.supernans.mateus.server;
 
-import org.example.resources.TerminalColors;
+import io.supernans.mateus.resources.TerminalColors;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -40,7 +39,6 @@ public class Server {
     }
 
     private boolean checkReady() {
-
         for (ClientHandler client : clients.keySet()) {
             if (!client.getPlayer().isReady()) {
                 return false;

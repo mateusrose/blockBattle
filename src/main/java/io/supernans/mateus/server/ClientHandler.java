@@ -1,27 +1,25 @@
-package org.example.server;
+package io.supernans.mateus.server;
 
-import org.example.game.Player;
-import org.example.resources.TerminalColors;
+import io.supernans.mateus.game.entities.Player;
+import io.supernans.mateus.resources.TerminalColors;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.concurrent.CyclicBarrier;
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
-
     private Server server;
     private Player player;
     private PrintWriter out;
+    private int clientID;
     private static int playerCount = 0;
     private String inputLine;
 
     public ClientHandler(Socket socket, Server server) {
         this.clientSocket = socket;
-
         this.server = server;
         this.player = new Player();
         assignColor();
@@ -54,6 +52,7 @@ public class ClientHandler implements Runnable {
         String[] colors = {TerminalColors.RED, TerminalColors.GREEN, TerminalColors.BLUE, TerminalColors.YELLOW};
         player.setColor(colors[playerCount]);
         playerCount++;
+        this.clientID = playerCount;
     }
 
     public void sendMessage(String message) {

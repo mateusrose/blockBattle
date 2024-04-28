@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Player {
     private String name;
+    private boolean isPlaying;
     private boolean isReady;
     private String color;
     private int x;
@@ -31,12 +32,12 @@ public class Player {
         this.name = name;
     }
 
-    public boolean isReady() {
-        return isReady;
+    public boolean isPlaying() {
+        return isPlaying;
     }
 
-    public void setReady(boolean ready) {
-        isReady = ready;
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
     }
 
     public String getColor() {
@@ -53,5 +54,37 @@ public class Player {
 
     public void setPos(int[] pos) {
     this.pos = pos;
+    }
+    public void addTreasure(int treasure) {
+        this.treasure += treasure;
+    }
+
+    public boolean isReady() {
+        return isReady;
+    }
+
+    public void setReady() {
+        if(isReady){
+            isReady = false;
+        } else {
+            isReady = true;
+        }
+    }
+
+    public void move(String direction){
+        switch (direction){
+            case "up":
+                pos[1]--;
+                break;
+            case "down":
+                pos[1]++;
+                break;
+            case "left":
+                pos[0]--;
+                break;
+            case "right":
+                pos[0]++;
+                break;
+        }
     }
 }

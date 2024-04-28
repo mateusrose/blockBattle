@@ -1,5 +1,6 @@
 package io.supernans.mateus.server;
 
+import io.supernans.mateus.game.game.Game;
 import io.supernans.mateus.resources.TerminalColors;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ public class Server {
     private ServerSocket serverSocket;
 
     private ExecutorService executorService;
+    private Game game = null;
     private ConcurrentHashMap<ClientHandler, Boolean> clients = new ConcurrentHashMap<>();
 
     public void init() {
@@ -26,7 +28,10 @@ public class Server {
 
             while (true) {
                 clientHandle();
-                if (checkReady()) {
+                if (readyToPlay()) {
+                    game = new Game(clients);
+                    game.init();
+
 
                 }
                 //gamestart
@@ -38,9 +43,9 @@ public class Server {
         }
     }
 
-    private boolean checkReady() {
+    private boolean readyToPlay() {
         for (ClientHandler client : clients.keySet()) {
-            if (!client.getPlayer().isReady()) {
+            if (!client.getPlayer().isPlaying()) {
                 return false;
             }
         }
@@ -68,5 +73,9 @@ public class Server {
             clients.put(clientHandler, true);
             executorService.execute(clientHandler);
         }
+    }
+
+    public Game getGame() {
+        return game;
     }
 }

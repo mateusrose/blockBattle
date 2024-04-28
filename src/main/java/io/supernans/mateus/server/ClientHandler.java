@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
+    private Thread thread;
     private Socket clientSocket;
     private Server server;
     private Player player;
@@ -17,20 +18,33 @@ public class ClientHandler implements Runnable {
     private int clientID;
     private static int playerCount = 0;
     private String inputLine;
+    private InputHandler input;
 
-    public ClientHandler(Socket socket, Server server) {
+    public ClientHandler(Socket socket, Server server) throws IOException {
         this.clientSocket = socket;
         this.server = server;
         this.player = new Player();
         assignColor();
+        input = new InputHandler(this);
     }
+
+    public InputHandler getInput() {
+        return input;
+    }
+
+    public Thread getThread() {
+        return thread;
+    }
+
+    public void setThread(Thread thread) {
+        this.thread = thread;
+    }
+
     @Override
     public void run() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
-
             setPlayerConfig();
-
 
             while ((inputLine = in.readLine()) != null) {
                 checkReady();
@@ -48,7 +62,8 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-    private void assignColor(){
+
+    private void assignColor() {
         String[] colors = {TerminalColors.RED, TerminalColors.GREEN, TerminalColors.BLUE, TerminalColors.YELLOW};
         player.setColor(colors[playerCount]);
         playerCount++;
@@ -67,17 +82,33 @@ public class ClientHandler implements Runnable {
     }
 
 
-    public void checkReady(){
-        if(inputLine.equals("ready")){
-            if (player.isReady()) {
-                out.println("You are now unready");
-                player.setReady(false);
+public void checkReady() {
+    if (inputLine.equals("ready")) {
+        if (server.getGame() == null) {
+            // The game has not started yet, so toggle the isPlaying state
+            if (player.isPlaying()) {
+                out.println("You are now unready to start playing");
+                player.setPlaying(false);
             } else {
-                out.println("You are now ready");
-                player.setReady(true);
+                out.println("You are now ready to play!");
+                player.setPlaying(true);
+            }
+        } else {
+            // The game has started, so toggle the isReady state
+            if (player.isReady()) {
+                out.println("You still want to parley");
+                player.setReady();
+            } else {
+                out.println("You are now ready to explore!");
+                player.setReady();
             }
         }
+    }
+}
 
+    public void printCurrentPosition() {
+        int[] position = player.getPos();
+        System.out.println("Current position of " + player.getName() + ": (" + position[0] + ", " + position[1] + ")");
     }
 
     public Socket getClientSocket() {
@@ -87,6 +118,7 @@ public class ClientHandler implements Runnable {
     public void setClientSocket(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
+
     public Server getServer() {
         return server;
     }
